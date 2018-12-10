@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define MAX_STEERING_VALUE (1)
-#deinfe MIN_STEERING_VALUE (-1)
+#define MIN_STEERING_VALUE (-1)
 
 // for convenience
 using json = nlohmann::json;
@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
   double kp = -0.25;
   double ki = 0;
   double kd = -0.75;
-  if(argc != 1 || argc != 4){
+  if(argc != 1 && argc != 4){
     printf("%s [<kp> <ki> <kd>]\n", argv[0]);
   }else if(argc == 4){
-    double kp =  atof(argv[1];
-    double ki =  atof(argv[2]);
-    double kd =  atof(argv[3]);
+    kp =  atof(argv[1]);
+    ki =  atof(argv[2]);
+    kd =  atof(argv[3]);
   }
   pid.Init(kp, ki, kd);
 
@@ -72,8 +72,10 @@ int main(int argc, char *argv[])
           * another PID controller to control the speed!
           */
           pid.UpdateError(cte);
-          steer_value = pid.TotalError(cte);
-          
+          steer_value = pid.TotalError();
+          steer_value = steer_value > MAX_STEERING_VALUE? MAX_STEERING_VALUE:steer_value;
+          steer_value = steer_value < MIN_STEERING_VALUE? MIN_STEERING_VALUE:steer_value;
+
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
