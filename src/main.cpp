@@ -4,6 +4,9 @@
 #include "PID.h"
 #include <math.h>
 
+#define MAX_STEERING_VALUE (1)
+#deinfe MIN_STEERING_VALUE (-1)
+
 // for convenience
 using json = nlohmann::json;
 
@@ -28,12 +31,23 @@ std::string hasData(std::string s) {
   return "";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   uWS::Hub h;
 
   PID pid;
   // TODO: Initialize the pid variable.
+  double kp = -0.25;
+  double ki = 0;
+  double kd = -0.75;
+  if(argc != 1 || argc != 4){
+    printf("%s [<kp> <ki> <kd>]\n", argv[0]);
+  }else if(argc == 4){
+    double kp =  atof(argv[1];
+    double ki =  atof(argv[2]);
+    double kd =  atof(argv[3]);
+  }
+  pid.Init(kp, ki, kd);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -57,6 +71,8 @@ int main()
           * NOTE: Feel free to play around with the throttle and speed. Maybe use
           * another PID controller to control the speed!
           */
+          pid.UpdateError(cte);
+          steer_value = pid.TotalError(cte);
           
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;

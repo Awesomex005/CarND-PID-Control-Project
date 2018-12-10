@@ -41,6 +41,9 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
+
+  /* Twiddle, adjust Kp Ki Kd coefficiency */
+  void Twiddle(double cte);
 };
 
 #endif /* PID_H */
