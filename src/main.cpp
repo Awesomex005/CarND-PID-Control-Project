@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
   PID pid;
   // TODO: Initialize the pid variable.
-  double kp = -0.25;
+  double kp = -0.20;
   double ki = 0;
   double kd = -0.75;
   if(argc != 1 && argc != 4){
@@ -76,14 +76,16 @@ int main(int argc, char *argv[])
           steer_value = steer_value > MAX_STEERING_VALUE? MAX_STEERING_VALUE:steer_value;
           steer_value = steer_value < MIN_STEERING_VALUE? MIN_STEERING_VALUE:steer_value;
 
+          pid.Twiddle(cte);
+
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          //std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.3;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {

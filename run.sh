@@ -6,4 +6,7 @@
 
 # Run particle filter
 cd ./build
-./pid
+date > ../pid.log
+./pid | tee -a ../pid.log
+date >> ../pid.log
+
