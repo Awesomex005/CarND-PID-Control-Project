@@ -42,11 +42,13 @@ double PID::TotalError() {
 #define PREPARE_N   (250)
 #define MEASURE_PERIOD_N (1000)
 #define MEASURE_CYCLE_N (PREPARE_N+MEASURE_PERIOD_N)
-void PID::Twiddle(double cte){
+void PID::Twiddle(double cte, double steer_value){
 
     static unsigned int cnt = 0;
     static double best_err = 0;
     static double err = 0;
+    static double err_cte = 0;
+    static double err_steer = 0;
     static bool err_initialized = false;
     static unsigned int i = 0;
     static unsigned int state = 0;
@@ -89,12 +91,17 @@ void PID::Twiddle(double cte){
             return;
         }
         else if(cnt >= PREPARE_N && cnt < MEASURE_CYCLE_N){
-            err += cte*cte;
+            err_cte += cte*cte;
+            err_steer += steer_value*steer_value;
             return;
         }
         else if(cnt >= MEASURE_CYCLE_N){
             cnt = 0;
-            err /= MEASURE_PERIOD_N;
+            err_cte /= MEASURE_PERIOD_N;
+            err_steer /= MEASURE_PERIOD_N;
+            err_steer *= 10.; // increase the order of magnitude to match err_cte
+            err = err_cte + err_steer; // consider steer value together with cte, to find PID coefficients that drive the car smoothly.
+            printf("\nWeighted cte error: %f Weighted steer error: %f\n", err_cte, err_steer);
         }
 
         if( false == err_initialized ){
@@ -103,8 +110,6 @@ void PID::Twiddle(double cte){
             printf("\nerr_initialized.\n");
         }
 
-        printf("\nBest error: %f Current error: %f\n", best_err, err);
-        printf("Best error: %f Current error: %f\n", best_err, err);
         printf("Best error: %f Current error: %f\n", best_err, err);
     }
 
@@ -123,9 +128,7 @@ void PID::Twiddle(double cte){
             state ++;
             err = 0;
             i_next = false;
-            printf("INC attempt.\n");
-            printf("INC attempt.\n");
-            printf("INC attempt.\n");
+            printf("\n\nINC attempt.\n");
             printf("parameter: %d Kpid: %f %f %f dKpid: %f %f %f\n", \
                         i, Kpid[0], Kpid[1], Kpid[2], dKpid[0], dKpid[1], dKpid[2]);
             return;
@@ -135,17 +138,13 @@ void PID::Twiddle(double cte){
                 best_err = err;
                 dKpid[i] *= 1.1;
                 printf("parameter INC accepted.\n");
-                printf("parameter INC accepted.\n");
-                printf("parameter INC accepted.\n");
             }
             else{
                 Kpid[i] -= 2 * dKpid[i];
                 state ++;
                 err = 0;
                 i_next = false;
-                printf("DEC attempt.\n");
-                printf("DEC attempt.\n");
-                printf("DEC attempt.\n");
+                printf("\n\nDEC attempt.\n");
                 printf("parameter: %d Kpid: %f %f %f dKpid: %f %f %f\n", \
                         i, Kpid[0], Kpid[1], Kpid[2], dKpid[0], dKpid[1], dKpid[2]);
                 return;
@@ -156,14 +155,10 @@ void PID::Twiddle(double cte){
                 best_err = err;
                 dKpid[i] *= 1.1;
                 printf("parameter DEC accepted.\n");
-                printf("parameter DEC accepted.\n");
-                printf("parameter DEC accepted.\n");
             }
             else{
                 Kpid[i] += dKpid[i];
                 dKpid[i] *= 0.8;
-                printf("Converge\n");
-                printf("Converge\n");
                 printf("Converge\n");
             }
         }

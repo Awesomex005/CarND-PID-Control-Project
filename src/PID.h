@@ -42,7 +42,7 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd, double dKp=0.05, double dKi=0.00000, double dKd=0.15, double tolerance=0.01);
+  void Init(double Kp, double Ki, double Kd, double dKp=0.05, double dKi=0.00000, double dKd=0.15, double tolerance=0.05);
 
   /*
   * Update the PID error variables given cross track error.
@@ -55,7 +55,7 @@ public:
   double TotalError();
 
   /* Twiddle, adjust Kp Ki Kd coefficiency */
-  void Twiddle(double cte);
+  void Twiddle(double cte, double steer_value);
 };
 
 #endif /* PID_H */

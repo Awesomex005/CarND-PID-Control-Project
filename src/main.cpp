@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
           steer_value = steer_value > MAX_STEERING_VALUE? MAX_STEERING_VALUE:steer_value;
           steer_value = steer_value < MIN_STEERING_VALUE? MIN_STEERING_VALUE:steer_value;
 
-          pid.Twiddle(cte);
+          pid.Twiddle(cte, steer_value);
 
           // DEBUG
           //std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
