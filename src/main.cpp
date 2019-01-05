@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
 
   PID pid;
   // TODO: Initialize the pid variable.
-  double kp = -0.20;
+  double kp = -0.150000;
   double ki = 0;
-  double kd = -0.75;
+  double kd = -0.927658;
   if(argc != 1 && argc != 4){
     printf("%s [<kp> <ki> <kd>]\n", argv[0]);
   }else if(argc == 4){
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
           steer_value = steer_value > MAX_STEERING_VALUE? MAX_STEERING_VALUE:steer_value;
           steer_value = steer_value < MIN_STEERING_VALUE? MIN_STEERING_VALUE:steer_value;
 
-          pid.Twiddle(cte, steer_value);
+          //pid.Twiddle(cte, steer_value);
 
           // DEBUG
           //std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
